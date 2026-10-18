@@ -60,4 +60,57 @@ for argv, want in ((["find", "q"], 0), (["user", "x"], 200), (["thread", "abcd"]
     for k, v in real.items():
         setattr(r, k, v)
     assert seen["bc"] == want, (argv, seen)
+
+# honest User-Agent: names the tool, no browser impersonation
+assert "threadsift" in r.UA and "Mozilla" not in r.UA
+
+# RSS pacing: at most one call per clock minute, also across separate processes (shared stamp file)
+import os
+import tempfile
+import time as _time
+tmp = Path(tempfile.mkdtemp())
+r.CACHE_DIR = tmp
+clock = [1000.0]  # 40s into the minute that started at 960
+slept = []
+real_time, real_sleep, real_urlopen = _time.time, _time.sleep, r.urllib.request.urlopen
+
+
+class FakeResp:
+    def __enter__(self): return self
+    def __exit__(self, *a): return False
+    def read(self): return b"<feed/>"
+
+
+def fake_sleep(s):
+    slept.append(s)
+    clock[0] += s
+
+
+r.time.time, r.time.sleep = (lambda: clock[0]), fake_sleep
+r.urllib.request.urlopen = lambda req, timeout=None: FakeResp()
+try:
+    r._last_call.clear()
+    r.http_get("https://www.reddit.com/a.rss", cache=False)              # first call: no wait
+    assert slept == [], slept
+    first = clock[0]
+    r._last_call.clear()                                                  # "another process": only the stamp file remains
+    stamp = tmp / "last-call-www.reddit.com"
+    os.utime(stamp, (first, first))
+    r.http_get("https://www.reddit.com/b.rss", cache=False)
+    second = clock[0]
+    assert int(first // 60) < int(second // 60), (first, second)         # lands in a later clock minute
+    assert second - first < 60, (first, second)                          # waits only until that minute, not a full 60s
+    r.http_get("https://arctic-shift.photon-reddit.com/x", cache=False)  # other hosts are not held to the RSS window
+    assert clock[0] - second <= r.MIN_INTERVAL + 0.01
+finally:
+    r.time.time, r.time.sleep, r.urllib.request.urlopen = real_time, real_sleep, real_urlopen
+
+# media cache: folders older than 14 days are pruned, newer ones kept
+media = tmp / "media"
+(media / "old").mkdir(parents=True)
+(media / "new").mkdir()
+old = real_time() - 15 * 86400
+os.utime(media / "old", (old, old))
+r.prune_media()
+assert not (media / "old").exists() and (media / "new").exists()
 print("ok")
