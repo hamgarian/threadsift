@@ -1,0 +1,7 @@
+# transcribe.py check 2026-10-18T01:12Z
+input: 7s WAV made with Windows text-to-speech (System.Speech), 16 kHz mono
+spoken: Claude Code works best when you plan first, keep each task small, and commit after every step.
+time: 37s (model already downloaded; model.bin 483546902 bytes)
+output:
+(language: en p=1.00, 7s, whisper-small on cuda)
+[   0.0s] Claude code works best when you plan first, keep each task small, and commit after every step.
