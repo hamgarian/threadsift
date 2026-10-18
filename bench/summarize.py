@@ -14,6 +14,7 @@ import re
 import sys
 from pathlib import Path
 
+sys.stdout.reconfigure(encoding="utf-8")  # the table has ✅/❌; Windows consoles default to cp1252
 R = Path(sys.argv[1] if len(sys.argv) > 1 else "results")
 TOOLS = ["ours", "hermes", "arctic", "buddy", "elias"]
 NAMES = {"ours": "threadsift", "hermes": "Hermes reddit-reading (anonymous)", "arctic": "arctic-shift-mcp 1.0.2",
