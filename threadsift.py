@@ -611,20 +611,28 @@ def comment_images(pid: str) -> list[str]:
 
 
 def transcribe(p: dict, out: Path) -> None:
-    """Best effort: Reddit blocks the audio stream of recent videos; older ones usually work."""
+    """Speech-to-text of a Reddit-hosted video: audio from the post's HLS playlist, then local Whisper."""
     video = ((p.get("secure_media") or p.get("media") or {}).get("reddit_video") or {})
     if not video.get("fallback_url"):
         print("(no Reddit-hosted video to transcribe)")
         return
-    base = re.split(r"/(?:CMAF|DASH)_", video["fallback_url"])[0]
+    # audio sits in the HLS playlist; newer posts sign it (hls_url) and serve video from packaged-media.redd.it
+    vid = next((m.group(1) for u in (video.get("hls_url"), video.get("dash_url"), video["fallback_url"])
+                if u and (m := re.search(r"redd\.it/(\w+)/", u))), None)
+    playlists = [u.replace("&amp;", "&") for u in (video.get("hls_url"),) if u]
+    playlists += [f"https://v.redd.it/{vid}/HLSPlaylist.m3u8"] if vid else []
     wav = out / "audio.wav"
     if not wav.exists():
-        r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-user_agent", UA, "-i", f"{base}/HLSPlaylist.m3u8",
-                            "-vn", "-ac", "1", "-ar", "16000", str(wav)], capture_output=True, text=True)
-        if r.returncode != 0:
+        ok = False
+        for playlist in playlists:  # signed URL first, then the plain one
+            r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-user_agent", UA, "-i", playlist,
+                                "-vn", "-ac", "1", "-ar", "16000", str(wav)], capture_output=True, text=True)
+            if (ok := r.returncode == 0):
+                break
+        if not ok:
             wav.unlink(missing_ok=True)
-            print("(audio unavailable: the video has no sound, or Reddit blocks its audio stream; "
-                  "this is common for videos from the last few months)")
+            print("(audio unavailable: the video has no sound track, or it was removed; "
+                  "many Reddit clips are silent)")
             return
     txt = out / "transcript.txt"
     if not txt.exists():
