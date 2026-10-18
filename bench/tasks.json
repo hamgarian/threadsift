@@ -1,0 +1,42 @@
+{
+  "_inputs": {
+    "T1": "search all of Reddit: 'claude code tips', 10 results",
+    "T2": "search r/selfhosted: 'secrets manager docker', 10 results",
+    "T3": "read thread 1ogtyds (r/selfhosted) with all comments",
+    "T4": "top posts of the week in r/LocalLLaMA, 10",
+    "T5": "user u/spez",
+    "T6": "gallery post 1x8lalp (r/homelab, 4 images): detect + get media",
+    "T7": "where was https://github.com/NousResearch/hermes-agent posted (Reddit search url: syntax for tools with search)",
+    "T8": "r/hermesagent growth: subscribers / posts per month",
+    "T9": "open comment permalink ot1ybwk in 1uc7izy: that comment + its replies only"
+  },
+  "buddy": [
+    {"task": "T1", "name": "search_reddit", "arguments": {"query": "claude code tips", "limit": 10}},
+    {"task": "T2", "name": "search_reddit", "arguments": {"query": "secrets manager docker", "subreddits": ["selfhosted"], "limit": 10}},
+    {"task": "T3", "name": "get_post_details", "arguments": {"post_id": "1ogtyds", "subreddit": "selfhosted", "comment_limit": 500, "comment_depth": 10}},
+    {"task": "T4", "name": "browse_subreddit", "arguments": {"subreddit": "LocalLLaMA", "sort": "top", "time": "week", "limit": 10}},
+    {"task": "T5", "name": "user_analysis", "arguments": {"username": "spez"}},
+    {"task": "T6", "name": "get_post_details", "arguments": {"post_id": "1x8lalp", "subreddit": "homelab"}},
+    {"task": "T7", "name": "search_reddit", "arguments": {"query": "url:github.com/NousResearch/hermes-agent", "limit": 10}},
+    {"task": "T9", "name": "get_post_details", "arguments": {"url": "https://www.reddit.com/r/ClaudeAI/comments/1uc7izy/i_added_a_clause_to_andrej_karpathys_4_claudemd/ot1ybwk/"}}
+  ],
+  "elias": [
+    {"task": "T1", "name": "reddit_search", "arguments": {"query": "claude code tips", "limit": 10}},
+    {"task": "T2", "name": "reddit_search_subreddit", "arguments": {"subreddit": "selfhosted", "query": "secrets manager docker", "limit": 10}},
+    {"task": "T3", "name": "reddit_get_post", "arguments": {"permalink": "/r/selfhosted/comments/1ogtyds/managing_secrets_and_credentials_in_docker_best/"}},
+    {"task": "T4", "name": "reddit_get_subreddit_posts", "arguments": {"subreddit": "LocalLLaMA", "category": "top", "time_filter": "week", "limit": 10}},
+    {"task": "T5", "name": "reddit_get_user", "arguments": {"username": "spez", "limit": 10}},
+    {"task": "T6", "name": "reddit_get_post", "arguments": {"permalink": "/r/homelab/comments/1x8lalp/enterprise_n00b/"}},
+    {"task": "T7", "name": "reddit_search", "arguments": {"query": "url:github.com/NousResearch/hermes-agent", "limit": 10}},
+    {"task": "T9", "name": "reddit_get_post", "arguments": {"permalink": "/r/ClaudeAI/comments/1uc7izy/i_added_a_clause_to_andrej_karpathys_4_claudemd/ot1ybwk/"}}
+  ],
+  "arctic": [
+    {"task": "T1", "name": "search_submissions", "arguments": {"query": "claude code tips", "limit": 10}},
+    {"task": "T2", "name": "search_submissions", "arguments": {"query": "secrets manager docker", "subreddit": "selfhosted", "limit": 10}},
+    {"task": "T3", "name": "get_post_comments", "arguments": {"link_id": "1ogtyds", "limit": 500}},
+    {"task": "T4", "name": "search_submissions", "arguments": {"subreddit": "LocalLLaMA", "limit": 10, "sort_by": "score"}},
+    {"task": "T5", "name": "search_submissions", "arguments": {"author": "spez", "limit": 10}},
+    {"task": "T6", "name": "search_submissions", "arguments": {"subreddit": "homelab", "title": "Enterprise n00b", "limit": 1}},
+    {"task": "T9", "name": "get_post_comments", "arguments": {"link_id": "1uc7izy", "limit": 500}}
+  ]
+}
