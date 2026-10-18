@@ -16,14 +16,14 @@ python <skill-folder>/threadsift.py <command> [options]
 
 - Anonymous `reddit.com/*.json` returns 403 and old.reddit redirects to login (measured Oct 2026).
   New official API keys need manual approval under Reddit's Responsible Builder Policy (since Nov 2025).
-- **Arctic Shift** (free, keyless) has the full archive, captures new posts within seconds, and serves full
+- **Arctic Shift** (free, keyless) has the full archive, captured new posts and comments 11-21 seconds after posting in one probe, and serves full
   comment trees, users and subreddit history.
 - **Reddit's public RSS** is the only relevance-ranked discovery that works without a key. It allows exactly
   1 call per clock minute per IP; failed calls don't count. The script waits for the next minute and caches results
   for an hour, so put more into each call: `limit=100` and combined subs (`r/a+b+c`).
 - If `REDDIT_CLIENT_ID` and `REDDIT_CLIENT_SECRET` are set (an approved app), `thread`, `search --query` and `latest`
-  use the official API automatically: live scores, 100 req/min. `--backend arctic` forces Arctic.
-- Do not reach for browser automation or stealth scrapers. They evade bot detection, are slow, and lose the comment structure.
+  use the official API automatically for live vote counts (untested by the author). `--backend arctic` forces Arctic.
+- Do not use browser automation or stealth scrapers to get around Reddit's blocks.
 
 ## Workflow
 
@@ -59,7 +59,7 @@ python <skill-folder>/threadsift.py <command> [options]
   (`--frames 6`, needs ffmpeg). Open the paths with your image-reading tool.
 - `--comments` also fetches images posted in the comments.
 - `--transcribe` transcribes a Reddit video's speech with local Whisper (`transcribe.py`, run via `uv`; the first run
-  downloads the model, about 460 MB). It is best effort: Reddit blocks the audio of recent videos, and the script says so.
+  downloads the model, about 480 MB). Many clips are silent or removed; the script says so when there is no audio.
   Shouting and music come out as junk, so check the stated language and confidence.
 - Media is cached in `~/.cache/threadsift/media/<id>/`, and folders older than 14 days are deleted automatically.
 
@@ -82,7 +82,6 @@ python <skill-folder>/threadsift.py <command> [options]
 - Arctic Shift scores and comment counts are snapshots. Posts under ~2 days old often show `1↑ 0💬`,
   so judge them by reading them. The order from `top`/`find` is Reddit's own ranking and can be trusted.
 - Arctic's search endpoints can shed load (HTTP 422). The script retries with backoff. Huge comment trees take 5-10s.
-- Not possible: comment search across all of Reddit, live vote counts without an approved app, and audio from most
-  recent videos.
+- Not possible: comment search across all of Reddit, and live vote counts without an approved app.
 - Deleted or removed posts are often still in Arctic, because they were captured before removal.
 - Be polite: run sequentially. For bulk analysis (whole subreddits, years), use the Arctic Shift data dumps instead of the API.
