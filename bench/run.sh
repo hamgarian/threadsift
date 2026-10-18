@@ -58,4 +58,9 @@ cli ours T7 $O links https://github.com/NousResearch/hermes-agent --limit 10 --n
 cli ours T8 $O trend --sub hermesagent --by month --after 2026-03-01 --no-cache --format json
 cli ours T9 $O thread https://www.reddit.com/r/ClaudeAI/comments/1uc7izy/i_added_a_clause_to_andrej_karpathys_4_claudemd/ot1ybwk/ --no-cache --format json
 
+# T4 ground truth: Reddit's own top-of-week list, fetched straight from Reddit (one more RSS call)
+sleep 60
+curl -s -A "threadsift-bench" "https://www.reddit.com/r/LocalLLaMA/top.rss?t=week&limit=25" > reference_top_week.xml
+# T7 ground truth: every archived post whose link (url field) is the repo
+curl -s "https://arctic-shift.photon-reddit.com/api/posts/search?url=https://github.com/NousResearch/hermes-agent&limit=100&fields=id" > reference_links.json
 echo done
