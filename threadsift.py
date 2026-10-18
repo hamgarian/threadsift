@@ -568,6 +568,8 @@ def cmd_links(a) -> None:
 def cmd_doctor(a) -> None:
     """Which data paths work right now, and what the next RSS call will cost."""
     checks = []
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    (CACHE_DIR / "last-call-www.reddit.com").touch()  # count this call so the next command waits for a new minute
     try:
         req = urllib.request.Request("https://www.reddit.com/r/announcements/new.rss?limit=1",
                                      headers={"User-Agent": BROWSER_UA})
