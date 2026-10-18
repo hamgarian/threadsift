@@ -354,7 +354,7 @@ def cmd_search(a) -> None:
     else:
         if not (a.sub or a.author or a.link):
             raise SystemExit("Arctic Shift keyword search needs --sub, --author or --link. "
-                             "For open-ended discovery use web search with site:reddit.com.")
+                             "For open-ended discovery use `find \"<terms>\"`.")
         common = dict(author=a.author, after=a.after, before=a.before,
                       limit=a.limit, sort=a.sort if a.sort in ("asc", "desc") else None)
         subs = a.sub.split(",") if a.sub else [None]
@@ -373,8 +373,8 @@ def cmd_search(a) -> None:
             except SystemExit as e:
                 if not keyword:
                     raise
-                raise SystemExit(f"{e}\nHint: post keyword search is overloaded. Discover threads via web "
-                                 "search (site:reddit.com/r/<sub> <terms>) and pass the URLs to `thread`, "
+                raise SystemExit(f"{e}\nHint: post keyword search is overloaded. Discover threads with "
+                                 "`find \"<terms>\" --sub <sub>` and pass the ids to `thread`, "
                                  "or search comments instead (--kind comments).")
         else:
             hits = arctic("/api/comments/search", body=a.query or a.body,
