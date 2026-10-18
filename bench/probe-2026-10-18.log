@@ -1,0 +1,30 @@
+# probe run 2026-10-18T01:10Z
+## 1. Anonymous JSON endpoints (expect 403) and old.reddit (expect redirect to login)
+403  https://www.reddit.com/r/LocalLLaMA/top.json?t=week&limit=2
+403  https://www.reddit.com/search.json?q=test&limit=2
+403  https://api.reddit.com/r/LocalLLaMA/hot?limit=2
+302 -> https://old.reddit.com/login/?reason=lor2&dest=https%3A%2F%2Fold.reddit.com%2Fr%2FLocalLLaMA%2Ftop.json%3Flimit%3D1
+## 2. RSS rate limit: 6 requests ~4s apart (expect 200, then 429s until the clock minute turns, then 200)
+01:11:56 200 x-ratelimit-used: 1 x-ratelimit-remaining: 0.0 x-ratelimit-reset: 59 
+01:12:00 429 x-ratelimit-used: 1 x-ratelimit-remaining: 0.0 x-ratelimit-reset: 54 
+01:12:05 429 x-ratelimit-used: 1 x-ratelimit-remaining: 0.0 x-ratelimit-reset: 50 
+01:12:10 429 x-ratelimit-used: 1 x-ratelimit-remaining: 0.0 x-ratelimit-reset: 44 
+01:12:15 429 x-ratelimit-used: 1 x-ratelimit-remaining: 0.0 x-ratelimit-reset: 40 
+01:12:20 429 x-ratelimit-used: 1 x-ratelimit-remaining: 0.0 x-ratelimit-reset: 35 
+## 3. Arctic Shift capture lag: newest post and comment in r/AskReddit (created -> retrieved_on)
+posts captured 21s after posting; newest is 34s old
+comments captured 11s after posting; newest is 32s old
+# section 4 re-run 2026-10-18T01:16Z after fixing the probe's URL handling (first attempt parsed new-style URLs wrongly)
+## 4. Reddit-hosted video: video file and audio playlist, using the URLs from each post's metadata
+##    (newer posts: signed packaged-media.redd.it video + signed hls_url; older posts: v.redd.it)
+recent 1x8n6bt video=206 audio_playlist=200
+recent 1x8mrtq video=206 audio_playlist=200
+recent 1x8k9j5 video=206 audio_playlist=200
+recent 1x8jti7 video=206 audio_playlist=200
+recent 1x8j1m4 video=403 audio_playlist=403
+older 1t0csmu video=206 audio_playlist=200
+older 1t0cfao video=206 audio_playlist=200
+older 1t09zhi video=206 audio_playlist=200
+older 1t09kpw video=206 audio_playlist=200
+older 1t09c2o video=206 audio_playlist=200
+# done
