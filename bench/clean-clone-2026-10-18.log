@@ -1,0 +1,27 @@
+# bench/clean_clone.sh against https://github.com/hamgarian/threadsift.git (v0.1.0), empty cache (REDDIT_CACHE_DIR = new temp dir), 2026-10-18
+clone: d26551f chore(release): v0.1.0
+PASS tests (1s) ok
+ 
+PASS doctor (3s) reddit rss    ok, 0.0 left, window resets in 25s
+ arctic shift  ok (1.3s)
+ reddit oauth  n
+PASS T1-find (32s) - 1x3go5l [193↑ 206💬] r/ClaudeCode 2026-10-11: Any tips on making a UI/UX frontend no
+PASS T2-find (60s) - 1s2f17m [370↑ 91💬] r/selfhosted 2026-03-24: Komodo 🦎 Container manager 🦎 v2: 
+PASS T3-thread (3s) # Managing Secrets and Credentials in Docker: Best Practices
+ r/selfhosted · u/SudoMason 
+PASS T4-top (59s) ## r/LocalLLaMA (top, week)
+ - 1x4u6vi [4159↑ 522💬] r/LocalLLaMA 2026-10-13: It's bee
+PASS T5-user (12s) # u/spez
+ karma 1499932 (post 832984, comment 666948) · 549 posts, 2568 comments · activ
+PASS T6-media (3s) <empty cache dir>\media\1x8lalp\00.jpg
+ <empty cache dir>
+PASS T7-links (2s) 9 posts link to https://github.com/NousResearch/hermes-agent (prefix match)
+ - 1v1vey8 [26
+PASS T8-trend (4s) r/hermesagent by month (Arctic Shift time series; recent buckets may still be filling)
+ 
+ 
+PASS T9-comment (4s) # I added a clause to Andrej Karpathy's 4 CLAUDE.MD clauses for Claude Code. It has been a
+--- checks
+T6 files: 4
+T9 target shown: 1, other top-level shown: 0
+T1 results with scores: 10
