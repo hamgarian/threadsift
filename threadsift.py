@@ -49,7 +49,6 @@ ARCTIC = "https://arctic-shift.photon-reddit.com"
 VERSION = "0.1.0"
 # Identifies the tool honestly; Reddit's RSS and media hosts serve it fine (no browser impersonation).
 UA = os.environ.get("REDDIT_USER_AGENT", f"threadsift/{VERSION} (+https://github.com/hamgarian/threadsift)")
-BROWSER_UA = UA  # name kept for the call sites that fetch RSS and media
 CACHE_DIR = Path(os.environ.get("REDDIT_CACHE_DIR", Path.home() / ".cache" / "threadsift"))
 CACHE_TTL = int(os.environ.get("REDDIT_CACHE_TTL", "3600"))
 MIN_INTERVAL = 1.0  # seconds between uncached requests to one host
@@ -409,7 +408,7 @@ def cmd_top(a) -> None:
 
 def rss_posts(url: str) -> list[dict]:
     """Posts from a Reddit Atom feed, enriched with Arctic Shift fields in one batched call."""
-    root = ET.fromstring(http_get(url, headers={"User-Agent": BROWSER_UA}))
+    root = ET.fromstring(http_get(url, headers={"User-Agent": UA}))
     ns = {"a": "http://www.w3.org/2005/Atom"}
     found = []
     for e in root.findall("a:entry", ns):
@@ -443,7 +442,7 @@ def cmd_latest(a) -> None:
 def cmd_subs(a) -> None:
     if a.query:  # topic search via Reddit's own subreddit search (one RSS call)
         root = ET.fromstring(http_get("https://www.reddit.com/subreddits/search.rss?" + urllib.parse.urlencode(
-            {"q": a.query, "limit": a.limit}), headers={"User-Agent": BROWSER_UA}))
+            {"q": a.query, "limit": a.limit}), headers={"User-Agent": UA}))
         ns = {"a": "http://www.w3.org/2005/Atom"}
         for e in root.findall("a:entry", ns):
             link = e.find("a:link", ns).get("href")
@@ -572,7 +571,7 @@ def cmd_doctor(a) -> None:
     (CACHE_DIR / "last-call-www.reddit.com").touch()  # count this call so the next command waits for a new minute
     try:
         req = urllib.request.Request("https://www.reddit.com/r/announcements/new.rss?limit=1",
-                                     headers={"User-Agent": BROWSER_UA})
+                                     headers={"User-Agent": UA})
         with urllib.request.urlopen(req, timeout=20) as r:
             checks.append(("reddit rss", f"ok, {r.headers.get('x-ratelimit-remaining')} left, "
                                          f"window resets in {r.headers.get('x-ratelimit-reset')}s"))
@@ -620,7 +619,7 @@ def transcribe(p: dict, out: Path) -> None:
     base = re.split(r"/(?:CMAF|DASH)_", video["fallback_url"])[0]
     wav = out / "audio.wav"
     if not wav.exists():
-        r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-user_agent", BROWSER_UA, "-i", f"{base}/HLSPlaylist.m3u8",
+        r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-user_agent", UA, "-i", f"{base}/HLSPlaylist.m3u8",
                             "-vn", "-ac", "1", "-ar", "16000", str(wav)], capture_output=True, text=True)
         if r.returncode != 0:
             wav.unlink(missing_ok=True)
@@ -681,7 +680,7 @@ def cmd_media(a) -> None:
         ext = re.search(r"\.(jpe?g|png|gif|webp|mp4)", url, re.I)
         path = out / f"{i:02d}.{ext.group(1).lower() if ext else 'jpg'}"
         if not path.exists():
-            req = urllib.request.Request(url, headers={"User-Agent": BROWSER_UA})
+            req = urllib.request.Request(url, headers={"User-Agent": UA})
             try:
                 with urllib.request.urlopen(req, timeout=120) as resp:
                     path.write_bytes(resp.read())
