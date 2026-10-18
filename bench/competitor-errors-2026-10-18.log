@@ -1,0 +1,15 @@
+# Competitor install/runtime errors seen during the benchmark (2026-10-18)
+
+## reddit-no-auth-mcp-server, installed as its README says: uvx reddit-no-auth-mcp-server
+  File "~\AppData\Local\uv\cache\archive-v0\aUJo3V-DnOWyNPjxmOq8Q\Lib\site-packages\redd\adapters\http_async.py", line 13, in <module>
+    import httpx
+ModuleNotFoundError: No module named 'httpx'
+
+## reddit-no-auth-mcp-server with httpx added: what every tool returned in the benchmark run
+[reddit_search] HTTP error (0). Reddit may be temporarily unavailable. Please try again later.
+its data path, probed from the same machine: www.reddit.com/r/LocalLLaMA/top.json -> 403
+
+## Hermes reddit-reading on Windows without UTF-8 output forced (first run; data was fetched, printing failed)
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f642' in position 12891: character maps to <undefined>
