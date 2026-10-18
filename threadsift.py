@@ -2,7 +2,7 @@
 # requires-python = ">=3.10"
 # dependencies = []
 # ///
-"""Reddit research CLI: compact, LLM-friendly Reddit data with no scraping.
+"""threadsift: research Reddit without an API key. Compact, LLM-friendly output; no scraping.
 
 Backends:
   arctic  - Arctic Shift API (free, no key, full archive + near-realtime, comment trees)
@@ -21,10 +21,10 @@ Commands:
   trend   --sub S [--query Q]     sub growth (posts/comments/subscribers), or keyword activity + top authors
   links   <url|post>              where on Reddit a URL was posted, busiest discussions first
   doctor                          which data paths work right now
-
-Listing commands (find, top, latest, search) share filters: --min-score --min-comments --media --no-nsfw
   rules   <subreddit> [...]       subreddit rules
   wiki    <subreddit> [--page P]  subreddit wiki pages
+
+Listing commands (find, top, latest, search, links) share filters: --min-score --min-comments --media --no-nsfw
 """
 from __future__ import annotations
 
@@ -46,9 +46,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ARCTIC = "https://arctic-shift.photon-reddit.com"
-BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-UA = os.environ.get("REDDIT_USER_AGENT", "script:reddit-research:0.1 (personal research)")
-CACHE_DIR = Path(os.environ.get("REDDIT_CACHE_DIR", Path.home() / ".cache" / "reddit-research"))
+VERSION = "0.1.0"
+# Identifies the tool honestly; Reddit's RSS and media hosts serve it fine (no browser impersonation).
+UA = os.environ.get("REDDIT_USER_AGENT", f"threadsift/{VERSION} (+https://github.com/hamgarian/threadsift)")
+BROWSER_UA = UA  # name kept for the call sites that fetch RSS and media
+CACHE_DIR = Path(os.environ.get("REDDIT_CACHE_DIR", Path.home() / ".cache" / "threadsift"))
 CACHE_TTL = int(os.environ.get("REDDIT_CACHE_TTL", "3600"))
 MIN_INTERVAL = 1.0  # seconds between uncached requests to one host
 HOST_INTERVAL = {"www.reddit.com": 60.0}  # public RSS: 1 call per clock minute (measured Oct 2026)
@@ -787,7 +789,7 @@ def main() -> None:
     su.set_defaults(fn=cmd_subs)
 
     m = sp.add_parser("media", help="download a post's image/gallery/video; videos & gifs -> still frames")
-    m.add_argument("ref"); m.add_argument("--out", help="folder (default ~/.cache/reddit-research/media/<id>)")
+    m.add_argument("ref"); m.add_argument("--out", help="folder (default ~/.cache/threadsift/media/<id>)")
     m.add_argument("--frames", type=int, default=6, help="stills per video/gif (0 = keep the file only)")
     m.add_argument("--max-files", type=int, default=20)
     m.add_argument("--comments", action="store_true", help="also images posted in the comments")
