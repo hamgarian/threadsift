@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="threadsift">
+  <!-- a sieve: thread lines fall in at the top, one strand comes out at the bottom -->
+  <rect width="64" height="64" rx="14" fill="#FF5A1F"/>
+  <g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round">
+    <path d="M16 12v8M26 10v10M38 10v10M48 12v8"/>
+    <path d="M12 24h40l-14 16v12l-12 4V40z" stroke-linejoin="round"/>
+  </g>
+</svg>
